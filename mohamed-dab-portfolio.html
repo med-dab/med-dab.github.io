@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohamed El Hedi DAB — Sysadmin & Cybersecurity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #050a0f;
+    --bg2:      #090f18;
+    --bg3:      #0c1520;
+    --border:   #0f2a40;
+    --accent:   #00e5ff;
+    --accent2:  #39ff14;
+    --accent3:  #ff4060;
+    --text:     #b8d4e8;
+    --text-dim: #4a6a80;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-head: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── SCANLINES OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.015) 2px,
+      rgba(0,229,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(5,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 56px;
+  }
+
+  .nav-logo {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color .3s;
+    position: relative;
+  }
+
+  .nav-links a::before {
+    content: '>';
+    margin-right: 4px;
+    color: var(--accent2);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::before { opacity: 1; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #matrix-canvas {
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeDown .8s ease both;
+  }
+
+  .hero-badge::before { content: '[ '; }
+  .hero-badge::after  { content: ' ]'; }
+
+  h1.hero-name {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 7vw, 80px);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 4px;
+    text-align: center;
+    line-height: 1.1;
+    animation: fadeDown .9s ease .1s both;
+    text-shadow: 0 0 40px rgba(0,229,255,0.4);
+  }
+
+  h1.hero-name span { color: var(--accent); }
+
+  .hero-title {
+    font-family: var(--font-mono);
+    font-size: clamp(13px, 2vw, 17px);
+    color: var(--accent);
+    margin-top: 16px;
+    letter-spacing: 2px;
+    animation: fadeDown 1s ease .2s both;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cursor { animation: blink .7s infinite; color: var(--accent2); }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-desc {
+    max-width: 600px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-top: 24px;
+    animation: fadeDown 1s ease .35s both;
+    line-height: 1.8;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+    animation: fadeDown 1s ease .5s both;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: all .3s;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-weight: bold;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0,229,255,0.6);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(0,229,255,0.08);
+    box-shadow: 0 0 20px rgba(0,229,255,0.25);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 64px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 1s ease .6s both;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stat-item { text-align: center; }
+
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 20px; }
+
+  .container { max-width: 1100px; margin: auto; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: .8;
+  }
+
+  h2.section-title {
+    font-family: var(--font-head);
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  h2.section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--bg2); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .skill-group {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .3s, transform .3s;
+  }
+
+  .skill-group::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .4s ease;
+  }
+
+  .skill-group:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .skill-group:hover::before { transform: scaleX(1); }
+
+  .skill-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .skill-name {
+    font-family: var(--font-head);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .skill-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    background: rgba(0,229,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 10px;
+    letter-spacing: 1px;
+    transition: all .25s;
+  }
+
+  .tag:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.12);
+  }
+
+  /* ── EXPERIENCE TIMELINE ── */
+  #experience { background: var(--bg); }
+
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), var(--border), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -46px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .timeline-dot.current {
+    background: var(--accent2);
+    box-shadow: 0 0 16px var(--accent2);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 8px var(--accent2); }
+    50% { box-shadow: 0 0 24px var(--accent2), 0 0 40px rgba(57,255,20,0.3); }
+  }
+
+  .tl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .tl-company {
+    font-family: var(--font-head);
+    font-size: 15px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .tl-date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    background: rgba(57,255,20,0.08);
+    border: 1px solid rgba(57,255,20,0.2);
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  .tl-role {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .tl-body {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    border-left: 2px solid var(--accent);
+  }
+
+  .tl-body ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .tl-body li {
+    font-size: 14px;
+    color: var(--text);
+    padding: 3px 0;
+    display: flex;
+    gap: 10px;
+  }
+
+  .tl-body li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── SECURITY LAB ── */
+  #lab { background: var(--bg2); }
+
+  .lab-card {
+    background: linear-gradient(135deg, var(--bg3) 0%, rgba(0,229,255,0.04) 100%);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lab-card::before {
+    content: 'ACTIVE LAB';
+    position: absolute;
+    top: 20px; right: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    background: rgba(57,255,20,0.1);
+    border: 1px solid rgba(57,255,20,0.3);
+    padding: 4px 12px;
+    border-radius: 2px;
+    animation: pulse-text 2s infinite;
+  }
+
+  @keyframes pulse-text {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  .lab-title {
+    font-family: var(--font-head);
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .lab-sub {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+
+  .lab-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .lab-tech {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    border: 1px solid rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.05);
+    padding: 6px 14px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lab-tech span { color: var(--text-dim); }
+
+  .lab-desc {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.8;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    margin-top: 8px;
+  }
+
+  /* ── PROJECTS ── */
+  #projects { background: var(--bg); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .project-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,0.03), transparent);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,229,255,0.12);
+  }
+
+  .project-card:hover::after { opacity: 1; }
+
+  .project-name {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: bold;
+  }
+
+  .project-name::before { content: '/ '; color: var(--accent2); }
+
+  .project-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    flex: 1;
+    line-height: 1.6;
+  }
+
+  .project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .project-lang {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lang-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+  }
+
+  .project-link {
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color .2s;
+  }
+
+  .project-link:hover { color: #fff; }
+
+  .projects-loading {
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 13px;
+    letter-spacing: 2px;
+    animation: pulse-text 1.5s infinite;
+  }
+
+  /* ── CERTIFICATIONS ── */
+  #certifications { background: var(--bg2); }
+
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .cert-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: all .3s;
+  }
+
+  .cert-card:hover {
+    border-color: rgba(0,229,255,0.4);
+    transform: translateY(-3px);
+  }
+
+  .cert-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(0,229,255,0.5));
+  }
+
+  .cert-name {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .cert-issuer {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .cert-status {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+  }
+
+  .cert-status.active {
+    color: var(--accent2);
+    background: rgba(57,255,20,0.1);
+    border: 1px solid rgba(57,255,20,0.3);
+  }
+
+  .cert-status.progress {
+    color: #ffa040;
+    background: rgba(255,160,64,0.1);
+    border: 1px solid rgba(255,160,64,0.3);
+    animation: pulse-text 2s infinite;
+  }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--bg); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; } }
+
+  .contact-info h3 {
+    font-family: var(--font-head);
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .contact-info p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    line-height: 1.8;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 14px 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: all .3s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateX(6px);
+  }
+
+  .contact-link .cl-icon { font-size: 20px; }
+
+  .terminal-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: var(--font-mono);
+  }
+
+  .terminal-bar {
+    background: var(--bg2);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terminal-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-body {
+    padding: 24px;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .t-line { display: flex; gap: 10px; color: var(--text-dim); }
+  .t-prompt { color: var(--accent2); flex-shrink: 0; }
+  .t-cmd { color: var(--accent); }
+  .t-out { color: var(--text); padding-left: 22px; }
+  .t-val { color: #fff; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  .footer-text span { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { gap: 16px; }
+    .timeline { padding-left: 28px; }
+    .timeline-dot { left: -34px; }
+    .hero-stats { gap: 28px; }
+  }
+
+  @media (max-width: 480px) {
+    .nav-links { display: none; }
+  }
+
+  /* ── GLITCH ── */
+  .glitch {
+    position: relative;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .glitch::before {
+    color: var(--accent3);
+    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+    animation: glitch1 4s infinite;
+  }
+
+  .glitch::after {
+    color: var(--accent);
+    clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+    animation: glitch2 4s infinite;
+  }
+
+  @keyframes glitch1 {
+    0%, 92%, 100% { transform: none; }
+    93% { transform: translateX(-4px); }
+    95% { transform: translateX(4px); }
+    97% { transform: translateX(-2px); }
+  }
+
+  @keyframes glitch2 {
+    0%, 88%, 100% { transform: none; }
+    89% { transform: translateX(3px); }
+    91% { transform: translateX(-3px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">DAB.SYS</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Expérience</a></li>
+    <li><a href="#lab">Lab</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="matrix-canvas"></canvas>
+  <p class="hero-badge">Disponible · Tunis, Tunisie</p>
+  <h1 class="hero-name glitch" data-text="Mohamed El Hedi DAB">Mohamed El Hedi <span>DAB</span></h1>
+  <div class="hero-title">
+    <span id="typed-text"></span><span class="cursor">█</span>
+  </div>
+  <p class="hero-desc">
+    Administrateur Systèmes & Réseaux passionné par la cybersécurité, Linux, et la supervision d'infrastructure. Certifié Fortinet NSE · LFS169 GitOps.
+  </p>
+  <div class="hero-cta">
+    <a href="mailto:mohameddab92@gmail.com" class="btn btn-primary">Recruter Mohamed</a>
+    <a href="https://linkedin.com/in/mohamed-el-hedi-dab" target="_blank" class="btn btn-secondary">LinkedIn →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-num">2+</span>
+      <span class="stat-label">Années d'exp.</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">150+</span>
+      <span class="stat-label">Utilisateurs gérés</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">80+</span>
+      <span class="stat-label">Postes administrés</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">2</span>
+      <span class="stat-label">Certifications</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <p class="section-label reveal">// Compétences Techniques</p>
+    <h2 class="section-title reveal">Stack & Outils</h2>
+    <div class="skills-grid">
+      <div class="skill-group reveal">
+        <span class="skill-icon">🐧</span>
+        <div class="skill-name">Systèmes</div>
+        <div class="skill-items">
+          <span class="tag">Linux Ubuntu/Debian</span>
+          <span class="tag">Windows Server</span>
+          <span class="tag">Active Directory</span>
+          <span class="tag">GPO</span>
+          <span class="tag">VMware</span>
+          <span class="tag">Docker</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <span class="skill-icon">🔒</span>
+        <div class="skill-name">Sécurité</div>
+        <div class="skill-items">
+          <span class="tag">Fortinet NSE</span>
+          <span class="tag">pfSense</span>
+          <span class="tag">Wazuh SIEM</span>
+          <span class="tag">Suricata IDS/IPS</span>
+          <span class="tag">VLAN</span>
+          <span class="tag">VPN</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <span class="skill-icon">📊</span>
+        <div class="skill-name">Supervision</div>
+        <div class="skill-items">
+          <span class="tag">Zabbix</span>
+          <span class="tag">Grafana</span>
+          <span class="tag">Kibana</span>
+          <span class="tag">Elasticsearch</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <span class="skill-icon">🗄️</span>
+        <div class="skill-name">Data & Scripting</div>
+        <div class="skill-items">
+          <span class="tag">MySQL</span>
+          <span class="tag">SQL Server</span>
+          <span class="tag">Bash Scripting</span>
+          <span class="tag">GitOps</span>
+          <span class="tag">Cisco VLAN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <p class="section-label reveal">// Parcours Professionnel</p>
+    <h2 class="section-title reveal">Expériences</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot current"></div>
+        <div class="tl-header">
+          <div class="tl-company">BITS</div>
+          <div class="tl-date">Jan 2026 — Présent</div>
+        </div>
+        <div class="tl-role">Technicien Réseaux & Systèmes</div>
+        <div class="tl-body">
+          <ul>
+            <li>Administration serveurs Linux (Ubuntu/Debian) et Windows Server</li>
+            <li>Configuration et maintenance équipements Fortinet et pfSense</li>
+            <li>Supervision d'infrastructure : Zabbix, Grafana, Kibana, Elasticsearch</li>
+            <li>Gestion des incidents réseau et sécurité, scripting Bash</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="tl-header">
+          <div class="tl-company">Law and Business School</div>
+          <div class="tl-date">Jan 2025 — Oct 2025</div>
+        </div>
+        <div class="tl-role">Spécialiste Support IT & Systèmes</div>
+        <div class="tl-body">
+          <ul>
+            <li>Administration de 80 postes Windows 10/11, Active Directory, GPO</li>
+            <li>Support technique N1/N2 pour 150+ utilisateurs (20–30 tickets/semaine)</li>
+            <li>Configuration switches/routeurs, documentation des procédures</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="tl-header">
+          <div class="tl-company">Tunisie Telecom</div>
+          <div class="tl-date">Août 2023</div>
+        </div>
+        <div class="tl-role">Stage Technicien</div>
+        <div class="tl-body">
+          <ul>
+            <li>Déploiement infrastructure FTTH</li>
+            <li>Tests de connectivité et validation des configurations réseau</li>
+          </ul>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="tl-header">
+          <div class="tl-company">Banque de Tunisie</div>
+          <div class="tl-date">Août 2022</div>
+        </div>
+        <div class="tl-role">Stage Technicien</div>
+        <div class="tl-body">
+          <ul>
+            <li>Migration système bancaire critique</li>
+            <li>Gestion des incidents et continuité de service</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAB -->
+<section id="lab">
+  <div class="container">
+    <p class="section-label reveal">// Projet Personnel</p>
+    <h2 class="section-title reveal">Security Lab</h2>
+    <div class="lab-card reveal">
+      <div class="lab-title">Environnement de Test Sécurité Complet</div>
+      <div class="lab-sub">Infrastructure personnelle · Simulation d'incidents · Analyse de logs</div>
+      <div class="lab-stack">
+        <div class="lab-tech">🔥 pfSense <span>Firewall / VPN</span></div>
+        <div class="lab-tech">🛡️ Wazuh <span>SIEM</span></div>
+        <div class="lab-tech">📡 Suricata <span>IDS/IPS</span></div>
+        <div class="lab-tech">📊 Zabbix <span>Monitoring</span></div>
+        <div class="lab-tech">🌐 VLANs <span>Segmentation</span></div>
+      </div>
+      <p class="lab-desc">
+        Lab sécurité personnel actif avec pfSense (firewall/VPN), VLANs segmentés, Wazuh SIEM et Zabbix.
+        Simulation d'incidents réseau, analyse de logs et tests de réponse aux alertes de sécurité.
+        Démontre une démarche proactive et une veille technique continue au-delà du cadre professionnel.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS (GitHub) -->
+<section id="projects">
+  <div class="container">
+    <p class="section-label reveal">// GitHub</p>
+    <h2 class="section-title reveal">Projets Open Source</h2>
+    <div id="projects-grid" class="projects-grid">
+      <p class="projects-loading">› Chargement des dépôts GitHub…</p>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="container">
+    <p class="section-label reveal">// Credentials</p>
+    <h2 class="section-title reveal">Certifications & Formation</h2>
+    <div class="certs-grid">
+      <div class="cert-card reveal">
+        <div class="cert-icon">🛡️</div>
+        <div>
+          <div class="cert-name">Fortinet Certified Associate — NSE</div>
+          <div class="cert-issuer">Fortinet</div>
+          <span class="cert-status active">✓ Certifié</span>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon">⚙️</div>
+        <div>
+          <div class="cert-name">LFS169 GitOps Fundamentals</div>
+          <div class="cert-issuer">Linux Foundation</div>
+          <span class="cert-status active">✓ Certifié</span>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon">🎓</div>
+        <div>
+          <div class="cert-name">Licence Professionnelle — CNAM</div>
+          <div class="cert-issuer">CNAM Paris</div>
+          <span class="cert-status progress">⟳ En cours</span>
+        </div>
+      </div>
+      <div class="cert-card reveal">
+        <div class="cert-icon">📋</div>
+        <div>
+          <div class="cert-name">BTS Réseaux & Sécurité</div>
+          <div class="cert-issuer">IMSET Tunis · 2022–2024</div>
+          <span class="cert-status active">✓ Obtenu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <p class="section-label reveal">// Get in Touch</p>
+    <h2 class="section-title reveal">Contact</h2>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Recrutons ensemble.</h3>
+        <p>Disponible sous 2 semaines · Ouvert aux opportunités en Tunisie et en remote. N'hésitez pas à me contacter.</p>
+        <div class="contact-links">
+          <a href="mailto:mohameddab92@gmail.com" class="contact-link">
+            <span class="cl-icon">✉️</span>
+            mohameddab92@gmail.com
+          </a>
+          <a href="tel:+21629810610" class="contact-link">
+            <span class="cl-icon">📞</span>
+            +216 29 810 610
+          </a>
+          <a href="https://linkedin.com/in/mohamed-el-hedi-dab" target="_blank" class="contact-link">
+            <span class="cl-icon">🔗</span>
+            linkedin.com/in/mohamed-el-hedi-dab
+          </a>
+          <a href="https://github.com/med-dab" target="_blank" class="contact-link">
+            <span class="cl-icon">🐙</span>
+            github.com/med-dab
+          </a>
+        </div>
+      </div>
+      <div class="terminal-box reveal">
+        <div class="terminal-bar">
+          <div class="terminal-dot" style="background:#ff5f57"></div>
+          <div class="terminal-dot" style="background:#ffbd2e"></div>
+          <div class="terminal-dot" style="background:#28c840"></div>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-left:auto">dab@sysadmin ~ </span>
+        </div>
+        <div class="terminal-body">
+          <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">whoami</span></div>
+          <div class="t-line"><span class="t-out"><span class="t-val">Mohamed El Hedi DAB</span></span></div>
+          <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">cat profile.json</span></div>
+          <div class="t-line"><span class="t-out">role: <span class="t-val">"Sysadmin & Cybersecurity"</span></span></div>
+          <div class="t-line"><span class="t-out">location: <span class="t-val">"Tunis, TN"</span></span></div>
+          <div class="t-line"><span class="t-out">available: <span class="t-val" style="color:var(--accent2)">true</span></span></div>
+          <div class="t-line"><span class="t-out">notice: <span class="t-val">"2 weeks"</span></span></div>
+          <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">cat languages.txt</span></div>
+          <div class="t-line"><span class="t-out">Arabe: <span class="t-val">Natif</span> · Français: <span class="t-val">B1</span> · English: <span class="t-val">B1</span></span></div>
+          <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">status --hire</span></div>
+          <div class="t-line"><span class="t-out" style="color:var(--accent2)">✓ Open to opportunities</span></div>
+          <div class="t-line"><span class="t-prompt cursor">█</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-text">
+    © 2026 <span>Mohamed El Hedi DAB</span> — Systèmes & Cybersécurité · Tunis, Tunisie
+  </p>
+</footer>
+
+<script>
+/* ── MATRIX RAIN ── */
+(function() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, drops;
+
+  function init() {
+    w = canvas.width  = canvas.offsetWidth;
+    h = canvas.height = canvas.offsetHeight;
+    const cols = Math.floor(w / 18);
+    drops = Array(cols).fill(1).map(() => Math.random() * -100);
+  }
+
+  const chars = '01アイウエオカキクケコ#$%&<>/\\[]{}|';
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5,10,15,0.05)';
+    ctx.fillRect(0, 0, w, h);
+    ctx.font = '14px Share Tech Mono, monospace';
+    drops.forEach((y, i) => {
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      const bright = Math.random() > 0.97;
+      ctx.fillStyle = bright ? '#fff' : '#00e5ff';
+      ctx.globalAlpha = bright ? 0.9 : 0.5;
+      ctx.fillText(ch, i * 18, y * 18);
+      ctx.globalAlpha = 1;
+      if (y * 18 > h && Math.random() > 0.975) drops[i] = 0;
+      drops[i] += 0.6;
+    });
+  }
+
+  init();
+  window.addEventListener('resize', init);
+  setInterval(draw, 60);
+})();
+
+/* ── TYPING EFFECT ── */
+(function() {
+  const el = document.getElementById('typed-text');
+  const texts = [
+    'Administrateur Systèmes & Réseaux',
+    'Cybersecurity Enthusiast',
+    'Fortinet NSE Certified',
+    'Linux & pfSense Expert',
+    'SIEM · Wazuh · Zabbix',
+  ];
+  let ti = 0, ci = 0, deleting = false;
+
+  function type() {
+    const t = texts[ti];
+    if (!deleting) {
+      el.textContent = t.slice(0, ++ci);
+      if (ci === t.length) { deleting = true; setTimeout(type, 2200); return; }
+    } else {
+      el.textContent = t.slice(0, --ci);
+      if (ci === 0) { deleting = false; ti = (ti + 1) % texts.length; }
+    }
+    setTimeout(type, deleting ? 40 : 70);
+  }
+  type();
+})();
+
+/* ── SCROLL REVEAL ── */
+(function() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        const tl = e.target.closest ? e.target : null;
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal, .timeline-item').forEach(el => observer.observe(el));
+})();
+
+/* ── GITHUB PROJECTS ── */
+(function() {
+  const grid = document.getElementById('projects-grid');
+  const langColors = {
+    'Python':'#3572A5','JavaScript':'#f1e05a','Shell':'#89e051',
+    'C':'#555555','PHP':'#4F5D95','TypeScript':'#2b7489','HTML':'#e34c26',
+    'CSS':'#563d7c','Java':'#b07219','Go':'#00ADD8'
+  };
+
+  fetch('https://api.github.com/users/med-dab/repos?sort=updated&per_page=12')
+    .then(r => r.json())
+    .then(repos => {
+      const filtered = repos.filter(r => !r.fork).slice(0, 9);
+      if (!filtered.length) { grid.innerHTML = '<p style="font-family:var(--font-mono);color:var(--text-dim)">Aucun dépôt public trouvé.</p>'; return; }
+      grid.innerHTML = filtered.map(repo => {
+        const color = langColors[repo.language] || '#8b949e';
+        return `
+          <div class="project-card">
+            <div class="project-name">${repo.name}</div>
+            <div class="project-desc">${repo.description || 'Aucune description.'}</div>
+            <div class="project-meta">
+              <div class="project-lang">
+                <div class="lang-dot" style="background:${color}"></div>
+                ${repo.language || '—'}
+              </div>
+              <a href="${repo.html_url}" target="_blank" class="project-link">View →</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    })
+    .catch(() => {
+      grid.innerHTML = `
+        <div class="project-card">
+          <div class="project-name">Security Lab Config</div>
+          <div class="project-desc">Configuration pfSense, Wazuh SIEM et Zabbix pour environnement de test sécurité.</div>
+          <div class="project-meta"><div class="project-lang"><div class="lang-dot"></div>Shell</div><a href="https://github.com/med-dab" target="_blank" class="project-link">GitHub →</a></div>
+        </div>
+        <div class="project-card">
+          <div class="project-name">Bash Admin Scripts</div>
+          <div class="project-desc">Scripts d'automatisation pour administration Linux, monitoring et gestion des incidents.</div>
+          <div class="project-meta"><div class="project-lang"><div class="lang-dot" style="background:#89e051"></div>Bash</div><a href="https://github.com/med-dab" target="_blank" class="project-link">GitHub →</a></div>
+        </div>
+      `;
+    });
+})();
+</script>
+</body>
+</html>
